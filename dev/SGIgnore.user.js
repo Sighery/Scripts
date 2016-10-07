@@ -4,8 +4,8 @@
 // @description  Implements full-fledged ignore feature for SG
 // @version      0.21
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
-// @downloadURL  https://raw.githubusercontent.com/Sighery/Scripts/master/dev/SGIgnore.user.js
-// @updateURL    https://raw.githubusercontent.com/Sighery/Scripts/master/dev/SGIgnore.meta.js
+// @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/dev/SGIgnore.user.js
+// @updateURL    https://www.github.com/Sighery/Scripts/raw/master/dev/SGIgnore.meta.js
 // @supportURL   https://www.steamgifts.com/discussion/PLACEHOLDER/
 // @namespace    Sighery
 // @match        https://www.steamgifts.com/*

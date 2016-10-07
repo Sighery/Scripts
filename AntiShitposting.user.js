@@ -4,8 +4,8 @@
 // @description  Hide all shitposts in SG
 // @version      0.2.2
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
-// @updateURL    https://raw.githubusercontent.com/Sighery/Scripts/master/AntiShitposting.meta.js
-// @downloadURL  https://raw.githubusercontent.com/Sighery/Scripts/master/AntiShitposting.user.js
+// @updateURL    https://www.github.com/Sighery/Scripts/raw/master/AntiShitposting.meta.js
+// @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/AntiShitposting.user.js
 // @supportURL   https://www.steamgifts.com/discussion/3PVwH/
 // @namespace    Sighery
 // @match        http://www.steamgifts.com/discussions*

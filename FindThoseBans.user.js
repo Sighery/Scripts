@@ -4,8 +4,8 @@
 // @description  Finds who is suspended and adds it to the blacklist and whitelist page
 // @version      0.3.6
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
-// @downloadURL  https://raw.githubusercontent.com/Sighery/Scripts/master/FindThoseBans.user.js
-// @updateURL    https://raw.githubusercontent.com/Sighery/Scripts/master/FindThoseBans.meta.js
+// @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.user.js
+// @updateURL    https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.meta.js
 // @supportURL   https://www.steamgifts.com/discussion/nV9XP/
 // @namespace    Sighery
 // @match        https://www.steamgifts.com/account/manage/blacklist*

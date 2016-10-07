@@ -4,8 +4,8 @@
 // @description  Replaces Steam's new overall score with the old one
 // @version      0.2.1
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
-// @downloadURL  https://raw.githubusercontent.com/Sighery/Scripts/master/STRC.user.js
-// @updateURL    https://raw.githubusercontent.com/Sighery/Scripts/master/STRC.meta.js
+// @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/STRC.user.js
+// @updateURL    https://www.github.com/Sighery/Scripts/raw/master/STRC.meta.js
 // @supportURL   https://www.steamgifts.com/discussion/o8tEc/
 // @namespace    Sighery
 // @match        http://store.steampowered.com/app/*

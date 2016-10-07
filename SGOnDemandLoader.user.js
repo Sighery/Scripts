@@ -4,8 +4,8 @@
 // @description  Stops images from loading all at the same time, and only loads them when you click the View attached image link
 // @version      0.1
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
-// @downloadURL  https://github.com/Sighery/Scripts/raw/master/SGOnDemandLoader.user.js
-// @updateURL    https://github.com/Sighery/Scripts/raw/master/SGOnDemandLoader.meta.js
+// @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/SGOnDemandLoader.user.js
+// @updateURL    https://www.github.com/Sighery/Scripts/raw/master/SGOnDemandLoader.meta.js
 // @supportURL   https://www.steamgifts.com/discussion/PLACEHOLDER/
 // @namespace    Sighery
 // @match        https://www.steamgifts.com/giveaway/*

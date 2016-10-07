@@ -4,8 +4,8 @@
 // @description  Show the pagination of a topic at the top apart of only at the bottom
 // @version      0.2.4
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
-// @downloadURL  https://raw.githubusercontent.com/Sighery/Scripts/master/PaginationTop.user.js
-// @updateURL    https://raw.githubusercontent.com/Sighery/Scripts/master/PaginationTop.meta.js
+// @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/PaginationTop.user.js
+// @updateURL    https://www.github.com/Sighery/Scripts/raw/master/PaginationTop.meta.js
 // @supportURL   https://www.steamgifts.com/discussion/Ju8nC/
 // @namespace    Sighery
 // @match        https://www.steamgifts.com/*
