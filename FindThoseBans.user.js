@@ -48,7 +48,7 @@ function importPage(link, number) {
                     if (suspensionTime == "permanent") {
                         injectMessage(rows[number], 1);
                     } else {
-                        injectMessage(rows[number], 2, /^(.*?)\sremaining/.exec(suspensionTime)[1]);
+                        injectMessage(rows[number], 2, suspensionTime);
                     }
                 }
             }
