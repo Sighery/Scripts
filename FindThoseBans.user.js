@@ -2,7 +2,7 @@
 // @name         Find Those Bans
 // @author       Sighery
 // @description  Finds who is suspended and adds it to the blacklist and whitelist page
-// @version      0.3.8
+// @version      0.3.9
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
 // @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.user.js
 // @updateURL    https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.meta.js
@@ -19,8 +19,8 @@ var rows = getRows();
 
 GM_xmlhttpRequest({
 	method: "HEAD",
-	url: "http://api.sighery.com/isup.php",
-	timeout: 1500,
+	url: "http://api.sighery.com/isup.html",
+	timeout: 2000,
 	ontimeout: function(response) {
 		console.log("isup request timed out, fallback on manual requests");
 		manual_requests();
@@ -36,6 +36,11 @@ GM_xmlhttpRequest({
 		}
 	}
 });
+
+injectRemoveAll();
+addLastOnlineHeader();
+
+
 
 function api_request(nick, number) {
 	GM_xmlhttpRequest({
@@ -56,11 +61,11 @@ function api_request(nick, number) {
 				} else if (jsonFile.suspension.type === 0 && jsonFile.suspension.end_time === null) {
 					injectMessage(rows[number], 1);
 				} else {
-					injectMessage(rows[number], 2, jsonFile.suspension.end_time);
+					injectMessage(rows[number], 2, generate_time_string_future(jsonFile.suspension.end_time), jsonFile.suspension.end_time);
 				}
 			}
 
-			addLastOnlineDate(rows[number], generate_time_string(jsonFile.last_online), jsonFile.last_online);
+			addLastOnlineDate(rows[number], generate_time_string_past(jsonFile.last_online), jsonFile.last_online);
 		}
 	});
 }
@@ -70,12 +75,6 @@ function manual_requests() {
 		importPage(rows[i].getElementsByClassName("table__column__heading")[0].href, i);
 	}
 }
-
-
-injectRemoveAll();
-addLastOnlineHeader();
-
-
 
 function importPage(link, number) {
 	GM_xmlhttpRequest({
@@ -192,7 +191,7 @@ function getRows() {
 	return document.getElementsByClassName("table__row-inner-wrap");
 }
 
-function generate_time_string(timestamp_date) {
+function generate_time_string_past(timestamp_date) {
 	if (timestamp_date === 0) {
 		return "Online Now";
 	}
@@ -213,9 +212,9 @@ function generate_time_string(timestamp_date) {
 
 		var time_count = Math.floor(rest / seconds_year);
 		if (time_count === 1) {
-			return "1 year ago";
+			return "1 year";
 		} else {
-			return time_count + " years ago";
+			return time_count + " years";
 		}
 	} else if (rest >= seconds_month) {
 		console.log("More than a month");
@@ -223,18 +222,18 @@ function generate_time_string(timestamp_date) {
 
 		var time_count = Math.floor(rest / seconds_month);
 		if (time_count === 1) {
-			return "1 month ago";
+			return "1 month";
 		} else {
-			return time_count + " months ago";
+			return time_count + " months";
 		}
 	} else if (rest >= seconds_week) {
 		console.log("More than a week");
 
 		var time_count = Math.floor(rest / seconds_week);
 		if (time_count === 1) {
-			return "1 week ago";
+			return "1 week";
 		} else {
-			return time_count + " weeks ago";
+			return time_count + " weeks";
 		}
 	} else if (rest >= seconds_day) {
 		console.log("More than a day");
@@ -244,7 +243,7 @@ function generate_time_string(timestamp_date) {
 		if (time_count === 1) {
 			return "1 day ago";
 		} else {
-			return time_count + " days ago";
+			return time_count + " days";
 		}
 	} else if (rest >= seconds_hour) {
 		console.log("More than an hour");
@@ -252,9 +251,9 @@ function generate_time_string(timestamp_date) {
 
 		var time_count = Math.floor(rest / seconds_hour);
 		if (time_count === 1) {
-			return "1 hour ago";
+			return "1 hour";
 		} else {
-			return time_count + " hours ago";
+			return time_count + " hours";
 		}
 	} else if (rest >= seconds_minute) {
 		console.log("More than a minute");
@@ -262,18 +261,94 @@ function generate_time_string(timestamp_date) {
 
 		var time_count = Math.floor(rest / seconds_minute);
 		if (time_count === 1) {
-			return "1 minute ago";
+			return "1 minute";
 		} else {
-			return time_count + " minutes ago";
+			return time_count + " minutes";
 		}
 	} else {
 		console.log("More than a second");
 		//return [5, rest];
 
 		if (rest === 0) {
-			return "1 second ago";
+			return "1 second";
 		} else {
-			return rest + " seconds ago";
+			return rest + " seconds";
+		}
+	}
+}
+
+
+function generate_time_string_future(timestamp_date) {
+	var seconds_year = 31536000;
+	var seconds_month = 2592000;
+	var seconds_week = 604800;
+	var seconds_day = 86400;
+	var seconds_hour = 3600;
+	var seconds_minute = 60;
+
+	var current_time = Math.floor(Date.now() / 1000);
+	var rest = timestamp_date - current_time;
+
+	if (rest < seconds_minute) {
+		console.log("Less than a minute");
+		if (rest === 1) {
+			return "1 second";
+		} else {
+			return rest + " seconds";
+		}
+	} else if (rest < seconds_hour) {
+		console.log("Less than an hour");
+
+		var time_count = Math.floor(rest / seconds_minute);
+		if (time_count === 1) {
+			return "1 minute";
+		} else {
+			return time_count + " minutes";
+		}
+	} else if (rest < seconds_day) {
+		console.log("Less than a day");
+
+		var time_count = Math.floor(rest / seconds_hour);
+		if (time_count === 1) {
+			return "1 hour";
+		} else {
+			return time_count + " hours";
+		}
+	} else if (rest < seconds_week) {
+		console.log("Less than a week");
+
+		var time_count = Math.floor(rest / seconds_day);
+		if (time_count === 1) {
+			return "1 day ago";
+		} else {
+			return time_count + " days";
+		}
+	} else if (rest < seconds_month) {
+		console.log("Less than a month");
+
+		var time_count = Math.floor(rest / seconds_week);
+		if (time_count === 1) {
+			return "1 week";
+		} else {
+			return time_count + " weeks";
+		}
+	} else if (rest < seconds_year) {
+		console.log("Less than a year");
+
+		var time_count = Math.floor(rest / seconds_month);
+		if (time_count === 1) {
+			return "1 month";
+		} else {
+			return time_count + " months";
+		}
+	} else {
+		console.log("Less than infinity");
+
+		var time_count = Math.floor(rest / seconds_year);
+		if (time_count === 1) {
+			return "1 year";
+		} else {
+			return time_count + " years";
 		}
 	}
 }
