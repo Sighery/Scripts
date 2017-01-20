@@ -2,7 +2,7 @@
 // @name         Find Those Bans
 // @author       Sighery
 // @description  Finds who is suspended and adds it to the blacklist and whitelist page
-// @version      0.3.91
+// @version      0.3.92
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
 // @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.user.js
 // @updateURL    https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.meta.js
@@ -38,7 +38,7 @@ GM_xmlhttpRequest({
 		console.log("isup request successful");
 
 		for (var i = 0; i < rows.length; i++) {
-			api_request(rows[i].getElementsByClassName("table__column__heading")[0].textContent, i);
+			api_request(rows[i].getElementsByClassName("table__column__heading")[0].textContent.trim(), i);
 		}
 	}
 });
