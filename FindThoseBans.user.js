@@ -2,7 +2,7 @@
 // @name         Find Those Bans
 // @author       Sighery
 // @description  Finds who is suspended and adds it to the blacklist and whitelist page
-// @version      0.3.9
+// @version      0.3.91
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
 // @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.user.js
 // @updateURL    https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.meta.js
@@ -15,11 +15,17 @@
 // @connect      api.sighery.com
 // ==/UserScript==
 
+// User-Agent string
+var user_agent = "Find Those Bans/0.3.91";
+
 var rows = getRows();
 
 GM_xmlhttpRequest({
 	method: "HEAD",
 	url: "http://api.sighery.com/isup.html",
+	headers: {
+		"User-Agent": user_agent
+	},
 	timeout: 2000,
 	ontimeout: function(response) {
 		console.log("isup request timed out, fallback on manual requests");
@@ -32,7 +38,7 @@ GM_xmlhttpRequest({
 		console.log("isup request successful");
 
 		for (var i = 0; i < rows.length; i++) {
-			api_request(rows[i].getElementsByClassName("table__column__heading")[0].innerHTML, i);
+			api_request(rows[i].getElementsByClassName("table__column__heading")[0].textContent, i);
 		}
 	}
 });
@@ -46,6 +52,9 @@ function api_request(nick, number) {
 	GM_xmlhttpRequest({
 		method: "GET",
 		url: "http://api.sighery.com/SteamGifts/IUsers/GetUserInfo/?filters=suspension,last_online&user=" + nick,
+		headers: {
+			"User-Agent": user_agent
+		},
 		onerror: function(response) {
 			console.log("There was some error with the request to the API, fallback on manual requests");
 			manual_requests();
@@ -80,6 +89,9 @@ function importPage(link, number) {
 	GM_xmlhttpRequest({
 		method: "GET",
 		url: link,
+		headers: {
+			"User-Agent": user_agent
+		},
 		onload: function(response) {
 			var tempElem = document.createElement("div");
 			tempElem.innerHTML = response.responseText;
