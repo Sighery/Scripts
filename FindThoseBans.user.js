@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // User-Agent string
-var user_agent = "Find Those Bans/0.3.91";
+var user_agent = "Find Those Bans/0.3.93";
 
 var rows = getRows();
 
@@ -39,7 +39,7 @@ GM_xmlhttpRequest({
 
 		for (var i = 0; i < rows.length; i++) {
 			var userLink = rows[i].getElementsByClassName("table__column__heading")[0].getAttribute("href");
-			api_request(userLink.substring(userLink.lastIndexOf("/")+1).trim(), i);
+			api_request(userLink.substring(userLink.lastIndexOf("/")+1), i);
 		}
 	}
 });
