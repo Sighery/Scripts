@@ -2,7 +2,7 @@
 // @name         Find Those Bans
 // @author       Sighery
 // @description  Finds who is suspended and adds it to the blacklist and whitelist page
-// @version      0.3.93
+// @version      0.3.94
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
 // @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.user.js
 // @updateURL    https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.meta.js
@@ -16,40 +16,79 @@
 // ==/UserScript==
 
 // User-Agent string
-var user_agent = "Find Those Bans/0.3.93";
+var user_agent = "Find Those Bans/0.3.94";
 
 var rows = getRows();
+var current_i = 0;
+var max_i = rows.length - 1;
 
-GM_xmlhttpRequest({
-	method: "HEAD",
-	url: "http://api.sighery.com/isup.html",
-	headers: {
-		"User-Agent": user_agent
-	},
-	timeout: 2000,
-	ontimeout: function(response) {
-		console.log("isup request timed out, fallback on manual requests");
-		manual_requests();
-	},
-	onerror: function(response) {
-		console.log("isup request failed, fallback on manual requests");
-	},
-	onload: function(response) {
-		console.log("isup request successful");
-
-		for (var i = 0; i < rows.length; i++) {
-			var userLink = rows[i].getElementsByClassName("table__column__heading")[0].getAttribute("href");
-			api_request(userLink.substring(userLink.lastIndexOf("/")+1), i);
-		}
-	}
-});
-
+var bapi_sighery = false;
+inject_style();
+isup_request_sighery();
 injectRemoveAll();
 addLastOnlineHeader();
 
+function next_request_serially() {
+	if (current_i > max_i) {
+		console.log("Done");
+	} else {
+		var date = new Date();
+		console.log("[" + date.toLocaleTimeString() + "]Request " + current_i);
+		if (bapi_sighery) {
+			api_request(rows[current_i]);
+		} else {
+			manual_request(rows[current_i]);
+		}
+	}
+}
+
+function inject_style() {
+	var style_code = [
+		".FTB-suspension-string {",
+		"	color: red;",
+		"	width: 150px;",
+		"}",
+		"",
+		".FTB-online-string {",
+		"	color: #AAA;",
+		"}"
+	].join("\n");
+	var node = document.createElement('style');
+	node.type = "text/css";
+	node.appendChild(document.createTextNode(style_code));
+	document.getElementsByTagName('head')[0].appendChild(node);
+}
+
+function isup_request_sighery() {
+	// Isup request to api.sighery.com
+	GM_xmlhttpRequest({
+		method: "HEAD",
+		url: "http://api.sighery.com/isup.html",
+		headers: {
+			"User-Agent": user_agent
+		},
+		timeout: 2000,
+		ontimeout: function(response) {
+			console.log("isup request timed out, fallback on manual requests");
+			next_request_serially();
+		},
+		onerror: function(response) {
+			console.log("isup request failed, fallback on manual requests");
+			next_request_serially();
+		},
+		onload: function(response) {
+			console.log("isup request successful");
+			bapi_sighery = true;
+			next_request_serially();
+		}
+	});
+}
 
 
-function api_request(nick, number) {
+function api_request(row) {
+	var nick = row.getElementsByClassName("table__column__heading")[0].href;
+	nick = nick.substring(nick.lastIndexOf("/") + 1);
+
 	GM_xmlhttpRequest({
 		method: "GET",
 		url: "http://api.sighery.com/SteamGifts/IUsers/GetUserInfo/?filters=suspension,last_online&user=" + nick,
@@ -58,42 +97,47 @@ function api_request(nick, number) {
 		},
 		onerror: function(response) {
 			console.log("There was some error with the request to the API, fallback on manual requests");
-			manual_requests();
+			next_request_serially();
 		},
 		onload: function(response) {
 			console.log("Request to IUsers/GetUserInfo successful, adding the data");
-			console.log("number is: " + number);
+			current_i++;
+			next_request_serially();
+
 			var jsonFile = JSON.parse(response.responseText);
 
 			if (jsonFile.suspension.type !== null) {
 				if (jsonFile.suspension.type === 1) {
-					injectMessage(rows[number], 0);
+					injectMessage(row, 0);
 				} else if (jsonFile.suspension.type === 0 && jsonFile.suspension.end_time === null) {
-					injectMessage(rows[number], 1);
+					injectMessage(row, 1);
 				} else {
-					injectMessage(rows[number], 2, generate_time_string_future(jsonFile.suspension.end_time), jsonFile.suspension.end_time);
+					injectMessage(row, 2, generate_time_string_future(jsonFile.suspension.end_time), jsonFile.suspension.end_time);
 				}
 			}
 
-			addLastOnlineDate(rows[number], generate_time_string_past(jsonFile.last_online), jsonFile.last_online);
+			addLastOnlineDate(row, generate_time_string_past(jsonFile.last_online), jsonFile.last_online);
 		}
 	});
 }
 
-function manual_requests() {
-	for (var i = 0; i < rows.length; i++) {
-		importPage(rows[i].getElementsByClassName("table__column__heading")[0].href, i);
-	}
-}
-
-function importPage(link, number) {
+function manual_request(row) {
 	GM_xmlhttpRequest({
 		method: "GET",
-		url: link,
+		url: row.getElementsByClassName("table__column__heading")[0].href,
 		headers: {
 			"User-Agent": user_agent
 		},
+		onerror: function(response) {
+			console.log("There was an error with the following row: ");
+			console.log(row);
+			current_i++;
+			next_request_serially();
+		},
 		onload: function(response) {
+			current_i++;
+			next_request_serially();
+
 			var tempElem = document.createElement("div");
 			tempElem.innerHTML = response.responseText;
 			var suspension = tempElem.getElementsByClassName("sidebar__suspension");
@@ -101,7 +145,7 @@ function importPage(link, number) {
 			if (suspension.length > 0) {
 				suspension = suspension[0];
 				if (suspension.textContent.trim().toLowerCase() == "banned") {
-					injectMessage(rows[number], 0);
+					injectMessage(row, 0);
 				} else if (suspension.textContent.trim().toLowerCase() == "suspended") {
 					var suspensionTime = tempElem.getElementsByClassName("sidebar__suspension-time")[0];
 
@@ -112,18 +156,18 @@ function importPage(link, number) {
 					}
 
 					if (suspensionTime == "permanent") {
-						injectMessage(rows[number], 1);
+						injectMessage(row, 1);
 					} else {
-						injectMessage(rows[number], 2, suspensionTime);
+						injectMessage(row, 2, suspensionTime);
 					}
 				}
 			}
 			var lastOnline = tempElem.getElementsByClassName("featured__table")[0].children[0].children[1].children[1];
 
 			if (lastOnline.children[0].children.length === 0) {
-				addLastOnlineDate(rows[number], lastOnline.children[0].textContent, lastOnline.children[0].getAttribute("data-timestamp"));
+				addLastOnlineDate(row, lastOnline.children[0].textContent, lastOnline.children[0].getAttribute("data-timestamp"));
 			} else {
-				addLastOnlineDate(rows[number], "Online Now");
+				addLastOnlineDate(row, "Online Now");
 			}
 		}
 	});
@@ -153,10 +197,13 @@ function addLastOnlineHeader() {
 }
 
 function addLastOnlineDate(elem, time, timestamp_date = null) {
+	elem.className += " FTB-checked-row";
+
 	var message = document.createElement("div");
 	message.innerHTML = time;
+	message.className = "FTB-online-string"
 
-	if (elem.getElementsByClassName("FTB").length > 0) {
+	if (elem.getElementsByClassName("FTB-suspension-string").length > 0) {
 		message.style.paddingRight = "100px";
 	} else {
 		message.style.paddingRight = "250px";
@@ -178,18 +225,16 @@ function injectMessage(elem, type, time, timestamp_date = null) {
 	*/
 
 	var message = document.createElement("div");
-	message.style.color = "red";
-	message.style.width = "150px";
 
 	if (type === 0) {
 		message.innerHTML = "Banned";
-		message.className = "FTB FTB-Permanent";
+		message.className = "FTB-suspension-string FTB-Permanent";
 	} else if (type === 1) {
 		message.innerHTML = "Permanently suspended";
-		message.className = "FTB FTB-Permanent";
+		message.className = "FTB-suspension-string FTB-Permanent";
 	} else if (type === 2) {
 		message.innerHTML = "Suspended for " + time;
-		message.className = "FTB FTB-Temporary";
+		message.className = "FTB-suspension-string FTB-Temporary";
 
 		if (timestamp_date !== null) {
 			var date = new Date(timestamp_date * 1000).toISOString();
@@ -201,7 +246,7 @@ function injectMessage(elem, type, time, timestamp_date = null) {
 }
 
 function getRows() {
-	return document.getElementsByClassName("table__row-inner-wrap");
+	return document.querySelectorAll(".table__row-inner-wrap:not(.FTB-checked-row)");
 }
 
 function generate_time_string_past(timestamp_date) {
