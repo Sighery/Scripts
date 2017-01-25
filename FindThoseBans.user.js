@@ -19,7 +19,7 @@
 // ==================== SETTING UP DATA ====================
 // ========== USER EDITABLE ==========
 // Endless scrolling type: 0 for Extended SteamGifts; 1 for SteamGifts++
-var endless_type = 0;
+var endless_type = null;
 
 // ========== PROGRAM'S DATA - DO NOT EDIT ==========
 // User-Agent string
