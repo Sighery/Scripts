@@ -2,7 +2,7 @@
 // @name         Find Those Bans
 // @author       Sighery
 // @description  Finds who is suspended and adds it to the blacklist and whitelist pages
-// @version      1.0.1
+// @version      1.0.2
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
 // @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.user.js
 // @updateURL    https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.meta.js
@@ -23,7 +23,7 @@ var endless_type = null;
 
 // ========== PROGRAM'S DATA - DO NOT EDIT ==========
 // User-Agent string
-var user_agent = "Find Those Bans/1.0.1";
+var user_agent = "Find Those Bans/1.0.2";
 
 var brequested_isup = false;
 var bapi_sighery = false;
@@ -180,16 +180,18 @@ function detect_mutations(endless_type, srq_queue) {
 						rows = mutation.addedNodes[0].querySelectorAll(".table__row-inner-wrap:not(.FTB-checked-row)");
 					}
 				}
-			} else {
+			} else if (endless_type === 2) {
 				if (mutation.addedNodes.length > 0) {
 					rows = [];
 					for(i = 0; i < mutation.addedNodes.length; i++) {
-						rows.push(mutation.addedNodes[i].querySelector(".table__row-inner-wrap:not(.FTB-checked-row)"));
+						if (mutation.addedNodes[i].className === "table__row-outer-wrap") {
+							rows.push(mutation.addedNodes[i].querySelector(".table__row-inner-wrap:not(.FTB-checked-row)"));
+						}
 					}
 				}
 			}
 
-			if (rows === undefined) {
+			if (rows === undefined || rows.length === 0) {
 				return;
 			}
 
