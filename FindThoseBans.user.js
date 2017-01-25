@@ -2,7 +2,7 @@
 // @name         Find Those Bans
 // @author       Sighery
 // @description  Finds who is suspended and adds it to the blacklist and whitelist pages
-// @version      1.0.0
+// @version      1.0.1
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
 // @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.user.js
 // @updateURL    https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.meta.js
@@ -18,12 +18,12 @@
 
 // ==================== SETTING UP DATA ====================
 // ========== USER EDITABLE ==========
-// Endless scrolling type: 0 for Extended SteamGifts; 1 for SteamGifts++
+// Endless scrolling type: 0 for Extended SteamGifts; 1 for SteamGifts++; 2 for Revilheart's script
 var endless_type = null;
 
 // ========== PROGRAM'S DATA - DO NOT EDIT ==========
 // User-Agent string
-var user_agent = "Find Those Bans/1.0.0";
+var user_agent = "Find Those Bans/1.0.1";
 
 var brequested_isup = false;
 var bapi_sighery = false;
@@ -34,7 +34,7 @@ var bapi_sighery = false;
 var queue = new SRQ();
 
 if (endless_type !== null) {
-	detect_mutation(endless_type, queue);
+	detect_mutations(endless_type, queue);
 }
 
 queue.add_to_queue({
@@ -144,7 +144,7 @@ function normal_callback(requested_obj) {
 
 
 // ========== MUTATION FUNCTIONS ==========
-function detect_mutation(endless_type, srq_queue) {
+function detect_mutations(endless_type, srq_queue) {
 	var target;
 	var config = {
 		"childList": true
@@ -157,11 +157,16 @@ function detect_mutation(endless_type, srq_queue) {
 		// SteamGifts++
 		target = document.getElementsByClassName("table")[0];
 		config.subtree = true;
+	} else if (endless_type === 2) {
+		// Revilheart's Script
+		target = document.getElementsByClassName("table__rows")[0];
+		config.subtree = true;
 	}
 
 	var observer = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			var rows;
+			var i;
 
 			if (endless_type === 0) {
 				if (mutation.addedNodes.length === 2) {
@@ -175,13 +180,19 @@ function detect_mutation(endless_type, srq_queue) {
 						rows = mutation.addedNodes[0].querySelectorAll(".table__row-inner-wrap:not(.FTB-checked-row)");
 					}
 				}
+			} else {
+				if (mutation.addedNodes.length > 0) {
+					rows = [];
+					for(i = 0; i < mutation.addedNodes.length; i++) {
+						rows.push(mutation.addedNodes[i].querySelector(".table__row-inner-wrap:not(.FTB-checked-row)"));
+					}
+				}
 			}
 
 			if (rows === undefined) {
 				return;
 			}
 
-			var i;
 			var link;
 			if (brequested_isup === false) {
 				setTimeout(function() {
