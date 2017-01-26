@@ -31,7 +31,7 @@ if (endless_type !== null) {
 
 var elements = document.getElementsByClassName("comment__toggle-attached");
 for (var i = 0; i < elements.length; i++) {
-	stop_loading();
+	stop_loading(elements[i]);
 }
 
 
