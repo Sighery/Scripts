@@ -15,7 +15,7 @@
 
 // ==================== SETTING UP DATA ====================
 // ========== USER EDITABLE ==========
-// 0 Extended SteamGifts, 1 SG++; 2 Revilheart's Script; 3 SGT Frog
+// Replace the null with: 0 for Extended SteamGifts, 1 for SG++; 2 for Revilheart's Script; 3 for SGT Frog
 var endless_type = null;
 
 
@@ -78,10 +78,7 @@ function detect_mutations_threads_giveaways(endless_type) {
 			if (endless_type === 0) {
 				// Extended SteamGifts
 				if (mutation.addedNodes.length === 2 && mutation.addedNodes[0].className === "page__heading" && mutation.addedNodes[1].className === "comments") {
-					console.log("Yep, discussions/giveaways, Extended mutation detected, we found the following attached images elements:");
 					elements = mutation.addedNodes[1].getElementsByClassName("comment__toggle-attached");
-					console.log(elements);
-					console.log("=============================");
 
 					for(i = 0; i < elements.length; i++) {
 						stop_loading(elements[i]);
@@ -90,10 +87,7 @@ function detect_mutations_threads_giveaways(endless_type) {
 			} else if (endless_type === 1) {
 				// SteamGifts++
 				if (mutation.addedNodes.length === 1 && mutation.addedNodes[0].className === "comment") {
-					console.log("Yep, discussions/giveaways, SteamGifts++ mutation detected, we found the following attached images elements:");
 					elements = mutation.addedNodes[0].getElementsByClassName("comment__toggle-attached");
-					console.log(elements);
-					console.log("=============================");
 
 					for(i = 0; i < elements.length; i++) {
 						stop_loading(elements[i]);
@@ -138,10 +132,7 @@ function detect_mutations_inbox_messages(endless_type) {
 			if (endless_type === 0) {
 				// Extended SteamGifts
 				if (mutation.addedNodes.length === 2 && mutation.addedNodes[0].className === "page__heading" && mutation.addedNodes[1].tagName === "DIV") {
-					console.log("Yep, inbox, Extended SteamGifts mutation detected, found the following attached images elements:");
 					elements = mutation.addedNodes[1].getElementsByClassName("comment__toggle-attached");
-					console.log(elements);
-					console.log("=============================");
 
 					for(i = 0; i < elements.length; i++) {
 						stop_loading(elements[i]);
