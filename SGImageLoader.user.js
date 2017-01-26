@@ -97,8 +97,8 @@ function detect_mutations_threads_giveaways(endless_type) {
 				// Revilheart's script (2) or SGT Frog (3)
 				if (mutation.addedNodes.length > 0) {
 					for(j = 0; j < mutation.addedNodes.length; j++) {
-						if (mutation.addedNodes[i].className === "comment") {
-							elements = mutation.addedNodes[i].getElementsByClassName("comment__toggle-attached");
+						if (mutation.addedNodes[j].className === "comment") {
+							elements = mutation.addedNodes[j].getElementsByClassName("comment__toggle-attached");
 
 							for(i = 0; i < elements.length; i++) {
 								stop_loading(elements[i]);
@@ -142,8 +142,8 @@ function detect_mutations_inbox_messages(endless_type) {
 				// Revilheart's script
 				if (mutation.addedNodes.length > 0) {
 					for(j = 0; j < mutation.addedNodes.length; j++) {
-						if (mutation.addedNodes[i].className === "comments__entity" || mutation.addedNodes[i].className === "comments") {
-							elements = mutation.addedNodes[i].getElementsByClassName("comment__toggle-attached");
+						if (mutation.addedNodes[j].className === "comments__entity" || mutation.addedNodes[j].className === "comments") {
+							elements = mutation.addedNodes[j].getElementsByClassName("comment__toggle-attached");
 
 							for(i = 0; i < elements.length; i++) {
 								stop_loading(elements[i]);
