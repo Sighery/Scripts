@@ -2,13 +2,13 @@
 // @name         Find Those Bans
 // @author       Sighery
 // @description  Finds who is suspended and adds it to the blacklist and whitelist pages
-// @version      1.0.2
+// @version      1.0.3
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
 // @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.user.js
 // @updateURL    https://www.github.com/Sighery/Scripts/raw/master/FindThoseBans.meta.js
 // @supportURL   https://www.steamgifts.com/discussion/nV9XP/
 // @namespace    Sighery
-// @require      https://github.com/Sighery/SRQ/releases/download/v0.1.0/SerialRequestsQueue-0.1.0.js
+// @require      https://github.com/Sighery/SRQ/releases/download/v0.1.1/SerialRequestsQueue.js
 // @match        https://www.steamgifts.com/account/manage/blacklist*
 // @match        https://www.steamgifts.com/account/manage/whitelist*
 // @grant        GM_xmlhttpRequest
