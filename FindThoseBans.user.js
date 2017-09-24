@@ -23,7 +23,7 @@ var endless_type = null;
 
 // ========== PROGRAM'S DATA - DO NOT EDIT ==========
 // User-Agent string
-var user_agent = "Find Those Bans/1.0.2";
+var user_agent = "Find Those Bans/1.0.3";
 
 var brequested_isup = false;
 var bapi_sighery = false;
