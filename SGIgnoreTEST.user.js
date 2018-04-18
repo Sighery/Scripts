@@ -1,8 +1,7 @@
-
 // ==UserScript==
 // @name         SGIgnore
 // @author       Sighery
-// @description  Implements a full-fledged ignore feature for SG
+// @description  Implements full-fledged ignore feature for SG
 // @version      0.21
 // @icon         https://raw.githubusercontent.com/Sighery/Scripts/master/favicon.ico
 // @downloadURL  https://www.github.com/Sighery/Scripts/raw/master/dev/SGIgnore.user.js
@@ -10,10 +9,15 @@
 // @supportURL   https://www.steamgifts.com/discussion/PLACEHOLDER/
 // @namespace    Sighery
 // @match        https://www.steamgifts.com/*
+// @grant        GM_setValue
+// @grant        GM_deleteValue
+// @grant        GM_getValue
 // ==/UserScript==
 
 //The every list, that means everything from him/her will be hidden:
-var ignoreLst = [];
+var ignoreLst = ["fyantastic", "combatbeard", "foe", "sickteddybear", "endlesshorizon",
+"cifudux", "tzaar", "wallister", "lostsoulvl", "phucmm1125", "brokesmile", "rockyy",
+"shindo", "linerax", "beatness", "dimaleth", "murattheinfidel"];
 //Some of these things not working yet
 //The ignore GAs by an user list:
 var ignoreGALst;
@@ -26,7 +30,7 @@ var ignoreCommentLst;
 //The ignore inbox comments by an user list, not planning to implement it for the moment:
 var ignoreInboxLst = [];
 //The ignore specific thread list:
-var threadsLst = [];
+var threadsLst = ["O9jSA"];
 //The ignore specific comment list, not planning to implement it for the moment:
 var commentsLst = [];
 //The ignore specific GA list:
@@ -81,70 +85,74 @@ function injectDialog() {
 
 	var dlgBody = dlgBox.children[1];
 	dlgBody.setAttribute('id', 'SGIgnore-dlg-body');
-	dlgBody.appendChild(document.createElement("input"));
-	dlgBody.children[0].placeholder = "Add nick and click the button with the list you want to add to";
-	dlgBody.children[0].style.marginBottom = "2px";
-	dlgBody.children[0].id = "SGIgnore-AddUser";
+	dlgBody.children[0].appendChild(document.createElement("a"));
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[1].className = "SGIgnore-button";
-	dlgBody.children[1].innerHTML = "Every";
-	dlgBody.children[1].id = "SGIgnore-AddUser-Every";
+	var dlg_tab1 = dlgBody.children[0];
+	dlg_tab1.className = "SGIgnore-tab";
+	dlg_tab1.id = "SGIgnore-tab-lists";
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[2].className = "SGIgnore-button";
-	dlgBody.children[2].innerHTML = "Giveaways";
-	dlgBody.children[2].id = "SGIgnore-AddUser-Giveaways";
+	dlg_tab1.appendChild(document.createElement("input"));
+	dlg_tab1.children[0].placeholder = "Add nick and click the button with the list you want to add to";
+	dlg_tab1.children[0].style.marginBottom = "2px";
+	dlg_tab1.children[0].id = "SGIgnore-AddUser";
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[3].className = "SGIgnore-button";
-	dlgBody.children[3].innerHTML = "Discussions";
-	dlgBody.children[3].id = "SGIgnore-AddUser-Discussions";
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[1].className = "SGIgnore-button";
+	dlg_tab1.children[1].innerHTML = "Every";
+	dlg_tab1.children[1].id = "SGIgnore-AddUser-Every";
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[4].className = "SGIgnore-button";
-	dlgBody.children[4].innerHTML = "Trades";
-	dlgBody.children[4].id = "SGIgnore-AddUser-Trades";
-	dlgBody.children[4].style.display = "none";
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[2].className = "SGIgnore-button";
+	dlg_tab1.children[2].innerHTML = "Giveaways";
+	dlg_tab1.children[2].id = "SGIgnore-AddUser-Giveaways";
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[5].className = "SGIgnore-button";
-	dlgBody.children[5].innerHTML = "Comments";
-	dlgBody.children[5].id = "SGIgnore-AddUser-Comments";
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[3].className = "SGIgnore-button";
+	dlg_tab1.children[3].innerHTML = "Discussions";
+	dlg_tab1.children[3].id = "SGIgnore-AddUser-Discussions";
 
-	dlgBody.appendChild(document.createElement("br"));
-	dlgBody.appendChild(document.createElement("br"));
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[4].className = "SGIgnore-button";
+	dlg_tab1.children[4].innerHTML = "Trades";
+	dlg_tab1.children[4].id = "SGIgnore-AddUser-Trades";
 
-	dlgBody.appendChild(document.createElement("input"));
-	dlgBody.children[8].placeholder = "Add nick and click the button with the list you want to remove from";
-	dlgBody.children[8].style.marginBottom = "2px";
-	dlgBody.children[8].id = "SGIgnore-RemoveUser";
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[5].className = "SGIgnore-button";
+	dlg_tab1.children[5].innerHTML = "Comments";
+	dlg_tab1.children[5].id = "SGIgnore-AddUser-Comments";
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[9].className = "SGIgnore-button";
-	dlgBody.children[9].innerHTML = "Every";
-	dlgBody.children[9].id = "SGIgnore-RemoveUser-Every";
+	dlg_tab1.appendChild(document.createElement("br"));
+	dlg_tab1.appendChild(document.createElement("br"));
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[10].className = "SGIgnore-button";
-	dlgBody.children[10].innerHTML = "Giveaways";
-	dlgBody.children[10].id = "SGIgnore-RemoveUser-Giveaways";
+	dlg_tab1.appendChild(document.createElement("input"));
+	dlg_tab1.children[8].placeholder = "Add nick and click the button with the list you want to remove from";
+	dlg_tab1.children[8].style.marginBottom = "2px";
+	dlg_tab1.children[8].id = "SGIgnore-RemoveUser";
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[11].className = "SGIgnore-button";
-	dlgBody.children[11].innerHTML = "Discussions";
-	dlgBody.children[11].id = "SGIgnore-RemoveUser-Discussions";
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[9].className = "SGIgnore-button";
+	dlg_tab1.children[9].innerHTML = "Every";
+	dlg_tab1.children[9].id = "SGIgnore-RemoveUser-Every";
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[12].className = "SGIgnore-button";
-	dlgBody.children[12].innerHTML = "Trades";
-	dlgBody.children[12].id = "SGIgnore-RemoveUser-Trades";
-	dlgBody.children[12].style.display = "none";
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[10].className = "SGIgnore-button";
+	dlg_tab1.children[10].innerHTML = "Giveaways";
+	dlg_tab1.children[10].id = "SGIgnore-RemoveUser-Giveaways";
 
-	dlgBody.appendChild(document.createElement("button"));
-	dlgBody.children[13].className = "SGIgnore-button";
-	dlgBody.children[13].innerHTML = "Comments";
-	dlgBody.children[13].id = "SGIgnore-RemoveUser-Comments";
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[11].className = "SGIgnore-button";
+	dlg_tab1.children[11].innerHTML = "Discussions";
+	dlg_tab1.children[11].id = "SGIgnore-RemoveUser-Discussions";
+
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[12].className = "SGIgnore-button";
+	dlg_tab1.children[12].innerHTML = "Trades";
+	dlg_tab1.children[12].id = "SGIgnore-RemoveUser-Trades";
+
+	dlg_tab1.appendChild(document.createElement("button"));
+	dlg_tab1.children[13].className = "SGIgnore-button";
+	dlg_tab1.children[13].innerHTML = "Comments";
+	dlg_tab1.children[13].id = "SGIgnore-RemoveUser-Comments";
 
 	dlgBody.appendChild(document.createElement("br"));
 	dlgBody.appendChild(document.createElement("br"));
@@ -184,16 +192,13 @@ function injectDialog() {
 	dlgBody.children[23].type = "checkbox";
 	dlgBody.children[23].id = "SGIgnore-Options-Trades";
 	dlgBody.children[23].className = "SGIgnore-Options-Checkbox";
-	dlgBody.children[23].style.display = "none";
 
 	dlgBody.appendChild(document.createElement("label"));
 	dlgBody.children[24].htmlFor = "SGIgnore-Options-Trades";
 	dlgBody.children[24].innerHTML = "Hide trades ";
 	dlgBody.children[24].className = "SGIgnore-Options-Label";
-	dlgBody.children[24].style.display = "none";
 
 	dlgBody.appendChild(document.createElement("br"));
-	dlgBody.children[25].style.display = "none";
 
 	dlgBody.appendChild(document.createElement("input"));
 	dlgBody.children[26].type = "checkbox";
@@ -235,16 +240,13 @@ function injectDialog() {
 	dlgBody.children[35].type = "checkbox";
 	dlgBody.children[35].id = "SGIgnore-Options-TradeComments";
 	dlgBody.children[35].className = "SGIgnore-Options-Checkbox";
-	dlgBody.children[35].style.display = "none";
 
 	dlgBody.appendChild(document.createElement("label"));
 	dlgBody.children[36].htmlFor = "SGIgnore-Options-TradeComments";
 	dlgBody.children[36].innerHTML = "Hide trade comments";
 	dlgBody.children[36].className = "SGIgnore-Options-Label";
-	dlgBody.children[36].style.display = "none";
 
 	dlgBody.appendChild(document.createElement("br"));
-	dlgBody.children[37].style.display = "none";
 
 	dlgBody.appendChild(document.createElement("input"));
 	dlgBody.children[38].type = "checkbox";
@@ -262,13 +264,11 @@ function injectDialog() {
 	dlgBody.children[41].type = "checkbox";
 	dlgBody.children[41].id = "SGIgnore-Options-MarkRead";
 	dlgBody.children[41].className = "SGIgnore-Options-Checkbox";
-	dlgBody.children[41].style.display = "none";
 
 	dlgBody.appendChild(document.createElement("label"));
 	dlgBody.children[42].htmlFor = "SGIgnore-Options-MarkRead";
 	dlgBody.children[42].innerHTML = "Mark as read automatically";
 	dlgBody.children[42].className = "SGIgnore-Options-Label";
-	dlgBody.children[42].style.display = "none";
 
 	dlgBody.appendChild(document.createElement("a"));
 	dlgBody.children[43].href = "https://www.steamgifts.com/discussion/PLACEHOLDER/";
@@ -278,7 +278,6 @@ function injectDialog() {
 	dlgBody.children[43].style.fontStyle = "italic";
 	dlgBody.children[43].style.textDecoration = "underline";
 	dlgBody.children[43].style.fontSize = "20px";
-	dlgBody.children[43].style.display = "none";
 
 	document.getElementById('SGIgnore-close').addEventListener('click', function() {
 		var blackbg = document.getElementById('SGIgnore-black-background');
@@ -303,7 +302,7 @@ function injectDialog() {
 		return index;
 	}
 
-	dlgBody.children[1].addEventListener("click", function() {
+	dlg_tab1.children[1].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-AddUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -322,7 +321,7 @@ function injectDialog() {
 		}
 	});
 
-	dlgBody.children[2].addEventListener("click", function() {
+	dlg_tab1.children[2].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-AddUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -341,7 +340,7 @@ function injectDialog() {
 		}
 	});
 
-	dlgBody.children[3].addEventListener("click", function() {
+	dlg_tab1.children[3].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-AddUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -360,7 +359,7 @@ function injectDialog() {
 		}
 	});
 
-	dlgBody.children[4].addEventListener("click", function() {
+	dlg_tab1.children[4].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-AddUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -379,7 +378,7 @@ function injectDialog() {
 		}
 	});
 
-	dlgBody.children[5].addEventListener("click", function() {
+	dlg_tab1.children[5].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-AddUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -398,7 +397,7 @@ function injectDialog() {
 		}
 	});
 
-	dlgBody.children[9].addEventListener("click", function() {
+	dlg_tab1.children[9].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-RemoveUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -418,7 +417,7 @@ function injectDialog() {
 		}
 	});
 
-	dlgBody.children[10].addEventListener("click", function() {
+	dlg_tab1.children[10].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-RemoveUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -438,7 +437,7 @@ function injectDialog() {
 		}
 	});
 
-	dlgBody.children[11].addEventListener("click", function() {
+	dlg_tab1.children[11].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-RemoveUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -458,7 +457,7 @@ function injectDialog() {
 		}
 	});
 
-	dlgBody.children[12].addEventListener("click", function() {
+	dlg_tab1.children[12].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-RemoveUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -479,7 +478,7 @@ function injectDialog() {
 		}
 	});
 
-	dlgBody.children[13].addEventListener("click", function() {
+	dlg_tab1.children[13].addEventListener("click", function() {
 		var value = document.getElementById("SGIgnore-RemoveUser").value;
 		value = value.trim();
 		value = value.toLowerCase();
@@ -736,6 +735,21 @@ function injectDlgStyle() {
 			"}",
 			".SGIgnore-Options-Label {",
 			"  color: rgb(62, 56, 56);",
+			"}",
+			".SGIgnore-left-tab {",
+			"  border: 10px solid #7C7D7E;",
+			"  padding: 10px;",
+			"  position: absolute;",
+			"  left: -130px;",
+			"  width: 100px;",
+			"  text-align: center;",
+			"  word-wrap: break-word;",
+			"  text-transform: uppercase;",
+			"  background-color: #C3C3C3;",
+			"  color: #333;",
+			"}",
+			".SGIgnore-left-tab-is-active {",
+			"  border-right-color: #00FFFF;",
 			"}"
 	].join("\n");
 	var node = document.createElement('style');
